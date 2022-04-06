@@ -62,15 +62,17 @@ class AddMovieActivity : AppCompatActivity(R.layout.activity_add_movie) {
     }
 
     private val searchMovieLauncher = startActivityForResult { result ->
-        if (result?.resultCode == Activity.RESULT_OK) {
-            binding.apply {
+        when (result?.resultCode) {
+            Activity.RESULT_OK -> binding.apply {
                 tetTitle.setText(result.getString(SearchActivity.EXTRA_TITLE) ?: "")
-                tetReleaseYear.setText(result.getString(SearchActivity.EXTRA_RELEASE_DATE) ?: "")
+                tetReleaseYear.setText(
+                    result.getString(SearchActivity.EXTRA_RELEASE_DATE) ?: ""
+                )
                 ivPoster.tag = result.getString(SearchActivity.EXTRA_POSTER_PATH)
                 ivPoster.load(TMDB_IMAGE_URL + result.getString(SearchActivity.EXTRA_POSTER_PATH))
             }
-        } else {
-            toast("Something went wrong")
+            Activity.RESULT_CANCELED -> toast("No movie selected")
+            else -> toast("Something went wrong")
         }
     }
 

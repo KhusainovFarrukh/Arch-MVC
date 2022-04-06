@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kh.farrukh.arch_mvc.R
-import kh.farrukh.arch_mvc.databinding.ActivitySearchBinding
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.remote.RemoteDataSource
-import kh.farrukh.arch_mvc.data.remote.SearchMovieResponse
 import kh.farrukh.arch_mvc.data.remote.RetrofitClient
-import kh.farrukh.arch_mvc.utils.toast
+import kh.farrukh.arch_mvc.data.remote.SearchMovieResponse
+import kh.farrukh.arch_mvc.databinding.ActivitySearchBinding
+import kh.farrukh.arch_mvc.utils.handle
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -45,9 +45,11 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private fun getSearchResults(query: String) {
         lifecycleScope.launchWhenStarted {
-            dataSource.searchResults(query).collect { response ->
-                // TODO: error handle
-                displayResults(response)
+            dataSource.searchResults(query).collect { result ->
+                result.handle(
+                    this@SearchActivity::displayResults,
+                    this@SearchActivity::displayError
+                )
             }
         }
     }
@@ -59,10 +61,14 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
         tvNoMovies.isVisible = response.results.isNullOrEmpty()
 
         if (response.results?.isNotEmpty() == true) searchAdapter.submitList(response.results)
+        else tvNoMovies.text = "No movies found"
     }
 
-    fun displayError(string: String) {
-        toast(string)
+    private fun displayError(throwable: Throwable?) = with(binding) {
+        pbLoading.isVisible = false
+        rvSearchResults.isVisible = false
+        tvNoMovies.isVisible = true
+        tvNoMovies.text = throwable?.message ?: "Something went wrong"
     }
 
     private fun onMovieClick(movie: Movie) {

@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun getMyMoviesList() {
         lifecycleScope.launchWhenStarted {
-            // TODO: error handle
             dataSource.allMovies.collect { movies -> displayMovies(movies) }
         }
     }
@@ -81,15 +80,15 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private val addMovieLauncher = startActivityForResult { result ->
-        if (result?.resultCode == Activity.RESULT_OK) {
-            toast("Movie successfully added.")
-        } else {
-            displayError("Movie could not be added.")
+        when (result?.resultCode) {
+            Activity.RESULT_OK -> toast("Movie successfully added")
+            Activity.RESULT_CANCELED -> toast("No movie provided to add")
+            else -> toast("Movie could not been added")
         }
     }
 
-    private fun displayError(e: String) {
-        toast(e)
+    private fun displayError(message: String) {
+        toast(message)
     }
 
     private fun initLocalDataSource() = LocalDataSource(
