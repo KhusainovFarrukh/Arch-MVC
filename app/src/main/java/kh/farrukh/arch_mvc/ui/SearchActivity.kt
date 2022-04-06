@@ -45,23 +45,19 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private fun getSearchResults(query: String) {
         lifecycleScope.launchWhenStarted {
-            dataSource.searchResults(query).collect { result ->
-                result.handle(
-                    this@SearchActivity::displayResults,
-                    this@SearchActivity::displayError
-                )
-            }
+            dataSource.searchResults(query).handle(
+                this@SearchActivity::displayResults,
+                this@SearchActivity::displayError
+            )
         }
     }
 
     private fun displayResults(response: SearchMovieResponse) = with(binding) {
         pbLoading.isVisible = false
-
-        rvSearchResults.isVisible = response.results?.isNotEmpty() == true
         tvNoMovies.isVisible = response.results.isNullOrEmpty()
 
-        if (response.results?.isNotEmpty() == true) searchAdapter.submitList(response.results)
-        else tvNoMovies.text = "No movies found"
+        searchAdapter.submitList(response.results)
+        if (response.results.isNullOrEmpty()) tvNoMovies.text = "No movies found"
     }
 
     private fun displayError(throwable: Throwable?) = with(binding) {

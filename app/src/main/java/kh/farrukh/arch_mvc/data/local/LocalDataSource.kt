@@ -1,9 +1,7 @@
 package kh.farrukh.arch_mvc.data.local
 
 import kh.farrukh.arch_mvc.data.Movie
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -15,18 +13,19 @@ class LocalDataSource(
     private val ioDispatcher: CoroutineContext
 ) {
 
-    private val ioScope by lazy { CoroutineScope(ioDispatcher) }
-    val allMovies: Flow<List<Movie>> by lazy { movieDao.all }
+    suspend fun getAll() = withContext(ioDispatcher) {
+        movieDao.getAll()
+    }
 
-    fun insert(movie: Movie) = ioScope.launch {
+    suspend fun insert(movie: Movie) = withContext(ioDispatcher) {
         movieDao.insert(movie)
     }
 
-    fun delete(movie: Movie) = ioScope.launch {
+    suspend fun delete(movie: Movie) = withContext(ioDispatcher) {
         movieDao.delete(movie.id)
     }
 
-    fun update(movie: Movie) = ioScope.launch {
+    suspend fun update(movie: Movie) = withContext(ioDispatcher) {
         movieDao.update(movie)
     }
 }

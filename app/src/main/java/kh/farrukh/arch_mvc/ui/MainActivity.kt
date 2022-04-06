@@ -10,13 +10,14 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kh.farrukh.arch_mvc.R
-import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
-import kh.farrukh.arch_mvc.data.local.LocalDataSource
 import kh.farrukh.arch_mvc.data.Movie
+import kh.farrukh.arch_mvc.data.local.LocalDataSource
 import kh.farrukh.arch_mvc.data.local.LocalDatabase
+import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -42,15 +43,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun getMyMoviesList() {
         lifecycleScope.launchWhenStarted {
-            dataSource.allMovies.collect { movies -> displayMovies(movies) }
+            displayMovies(dataSource.getAll())
         }
     }
 
     private fun displayMovies(movieList: List<Movie>) = with(binding) {
-        rvMovies.isVisible = movieList.isNotEmpty()
         layoutEmpty.isVisible = movieList.isEmpty()
-
-        if (movieList.isNotEmpty()) mainAdapter.submitList(movieList)
+        mainAdapter.submitList(movieList)
     }
 
     private fun goToAddMovieActivity() {
@@ -64,15 +63,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.deleteMenuItem) {
-            for (movie in mainAdapter.selectedMovies) {
-                dataSource.delete(movie)
-            }
-            mainAdapter.clearSelectedMovies()
+            lifecycleScope.launch {
+                for (movie in mainAdapter.selectedMovies) {
+                    dataSource.delete(movie)
+                }
+                mainAdapter.clearSelectedMovies()
 
-            if (mainAdapter.selectedMovies.size == 1) {
-                toast("Movie deleted")
-            } else if (mainAdapter.selectedMovies.size > 1) {
-                toast("Movies deleted")
+                if (mainAdapter.selectedMovies.size == 1) {
+                    toast("Movie deleted")
+                } else if (mainAdapter.selectedMovies.size > 1) {
+                    toast("Movies deleted")
+                }
+                displayMovies(dataSource.getAll())
             }
         }
 
@@ -81,7 +83,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val addMovieLauncher = startActivityForResult { result ->
         when (result?.resultCode) {
-            Activity.RESULT_OK -> toast("Movie successfully added")
+            Activity.RESULT_OK -> {
+                toast("Movie successfully added")
+                getMyMoviesList()
+            }
             Activity.RESULT_CANCELED -> toast("No movie provided to add")
             else -> toast("Movie could not been added")
         }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.databinding.ActivityAddMovieBinding
@@ -17,6 +18,7 @@ import kh.farrukh.arch_mvc.utils.load
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  *Created by farrukh_kh on 4/3/22 10:26 PM
@@ -49,15 +51,17 @@ class AddMovieActivity : AppCompatActivity(R.layout.activity_add_movie) {
         if (TextUtils.isEmpty(tetTitle.text)) {
             toast("Movie title cannot be empty")
         } else {
-            val title = tetTitle.text.toString()
-            val releaseDate = tetReleaseYear.text.toString()
-            val posterPath = if (ivPoster.tag != null) ivPoster.tag.toString() else ""
+            lifecycleScope.launch {
+                val title = tetTitle.text.toString()
+                val releaseDate = tetReleaseYear.text.toString()
+                val posterPath = if (ivPoster.tag != null) ivPoster.tag.toString() else ""
 
-            val movie = Movie(title = title, releaseDate = releaseDate, posterPath = posterPath)
-            dataSource.insert(movie)
+                val movie = Movie(title = title, releaseDate = releaseDate, posterPath = posterPath)
+                dataSource.insert(movie)
 
-            setResult(Activity.RESULT_OK)
-            finish()
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
         }
     }
 
