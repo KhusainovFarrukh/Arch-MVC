@@ -47,10 +47,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun displayMovies(movieList: List<Movie>) = with(binding) {
-        rvMovies.isVisible = movieList.isNotEmpty()
         layoutEmpty.isVisible = movieList.isEmpty()
-
-        if (movieList.isNotEmpty()) mainAdapter.submitList(movieList)
+        mainAdapter.submitList(movieList)
     }
 
     private fun goToAddMovieActivity() {
