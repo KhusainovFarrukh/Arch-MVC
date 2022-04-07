@@ -9,20 +9,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kh.farrukh.arch_mvc.R
-import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
-import kh.farrukh.arch_mvc.data.local.LocalDataSource
 import kh.farrukh.arch_mvc.data.Movie
-import kh.farrukh.arch_mvc.data.local.LocalDatabase
+import kh.farrukh.arch_mvc.data.local.LocalDataSource
+import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val binding by viewBinding(ActivityMainBinding::bind)
     private val mainAdapter by lazy { MainAdapter() }
-    private val dataSource by lazy { initLocalDataSource() }
+
+    @Inject
+    lateinit var dataSource: LocalDataSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,8 +91,4 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun displayError(message: String) {
         toast(message)
     }
-
-    private fun initLocalDataSource() = LocalDataSource(
-        LocalDatabase.getInstance(application).movieDao(), Dispatchers.IO
-    )
 }
