@@ -8,7 +8,10 @@ import kotlin.concurrent.thread
  *Created by farrukh_kh on 4/3/22 4:14 PM
  *kh.farrukh.arch_mvc.model
  **/
-class LocalDataSource(private val movieDao: MovieDao) {
+@Singleton
+class LocalDataSource @Inject constructor(
+    private val movieDao: MovieDao,
+) {
 
     val allMovies: Flowable<List<Movie>> by lazy { movieDao.all }
 

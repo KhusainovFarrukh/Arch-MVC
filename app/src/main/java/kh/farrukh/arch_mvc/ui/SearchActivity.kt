@@ -7,25 +7,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import by.kirich1409.viewbindingdelegate.viewBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import dagger.hilt.android.AndroidEntryPoint
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.remote.RemoteDataSource
-import kh.farrukh.arch_mvc.data.remote.RetrofitClient
 import kh.farrukh.arch_mvc.data.remote.SearchMovieResponse
 import kh.farrukh.arch_mvc.databinding.ActivitySearchBinding
 import kh.farrukh.arch_mvc.utils.handle
 import org.reactivestreams.Subscription
+import javax.inject.Inject
 
 /**
  *Created by farrukh_kh on 4/6/22 5:49 PM
  *kh.farrukh.arch_mvc.ui
  **/
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private val binding by viewBinding(ActivitySearchBinding::bind)
     private val searchAdapter by lazy { SearchAdapter(::onMovieClick) }
     private val dataSource by lazy { initRemoteDataSource() }
     private var resultsSubscription: Subscription? = null
+
+    @Inject
+    lateinit var dataSource: RemoteDataSource
 
     private val query by lazy { intent?.getStringExtra(SEARCH_QUERY) ?: "" }
 

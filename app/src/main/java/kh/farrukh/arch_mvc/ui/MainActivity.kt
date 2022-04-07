@@ -18,11 +18,14 @@ import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
 import org.reactivestreams.Subscription
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val binding by viewBinding(ActivityMainBinding::bind)
     private val mainAdapter by lazy { MainAdapter() }
-    private val dataSource by lazy { initLocalDataSource() }
+
+    @Inject
+    lateinit var dataSource: LocalDataSource
 
     private var allMoviesSubscription: Subscription? = null
 
@@ -97,8 +100,4 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun displayError(error: Throwable) {
         toast(error.message ?: "Unknown error")
     }
-
-    private fun initLocalDataSource() = LocalDataSource(
-        LocalDatabase.getInstance(application).movieDao()
-    )
 }
