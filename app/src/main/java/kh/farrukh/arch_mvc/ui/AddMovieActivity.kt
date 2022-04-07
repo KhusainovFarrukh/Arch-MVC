@@ -16,7 +16,6 @@ import kh.farrukh.arch_mvc.utils.getString
 import kh.farrukh.arch_mvc.utils.load
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
-import kotlinx.coroutines.Dispatchers
 
 /**
  *Created by farrukh_kh on 4/3/22 10:26 PM
@@ -77,6 +76,6 @@ class AddMovieActivity : AppCompatActivity(R.layout.activity_add_movie) {
     }
 
     private fun initLocalDataSource() = LocalDataSource(
-        LocalDatabase.getInstance(application).movieDao(), Dispatchers.IO
+        LocalDatabase.getInstance(application).movieDao()
     )
 }

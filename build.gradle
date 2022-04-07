@@ -4,7 +4,6 @@ buildscript {
         kotlin_version = "1.6.10"
         room_version = "2.5.0-alpha01"
         retrofit_version = "2.9.0"
-        coroutines_version="1.6.0"
     }
 }
 

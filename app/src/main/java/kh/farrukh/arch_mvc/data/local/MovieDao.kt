@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Update
+import io.reactivex.rxjava3.core.Flowable
 import kh.farrukh.arch_mvc.data.Movie
 import kotlinx.coroutines.flow.Flow
 
@@ -16,17 +17,17 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDao {
 
     @get:Query("SELECT * FROM movie_table")
-    val all: Flow<List<Movie>>
+    val all: Flowable<List<Movie>>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insert(movie: Movie)
+    fun insert(movie: Movie)
 
     @Query("DELETE FROM movie_table WHERE id = :id")
-    suspend fun delete(id: Int?)
+    fun delete(id: Int?)
 
     @Query("DELETE FROM movie_table")
-    suspend fun deleteAll()
+    fun deleteAll()
 
     @Update
-    suspend fun update(movie: Movie)
+    fun update(movie: Movie)
 }

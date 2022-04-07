@@ -1,26 +1,17 @@
 package kh.farrukh.arch_mvc.data.remote
 
+import io.reactivex.rxjava3.core.Flowable
 import kh.farrukh.arch_mvc.BuildConfig
 import kh.farrukh.arch_mvc.utils.toResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlin.coroutines.CoroutineContext
 
 /**
  *Created by farrukh_kh on 4/3/22 4:14 PM
  *kh.farrukh.arch_mvc.model
  **/
-class RemoteDataSource(
-    private val moviesApi: MoviesApi,
-    private val ioDispatcher: CoroutineContext
-) {
+class RemoteDataSource(private val moviesApi: MoviesApi) {
 
-    fun searchResults(query: String): Flow<Result<SearchMovieResponse>> = flow {
-        try {
-            emit(moviesApi.searchMovie(BuildConfig.TMDB_API_KEY, query).toResult())
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
-    }.flowOn(ioDispatcher)
+    fun searchResults(query: String): Flowable<Result<SearchMovieResponse>> {
+        return moviesApi.searchMovie(BuildConfig.TMDB_API_KEY, query)
+            .map { response -> response.toResult() }
+    }
 }

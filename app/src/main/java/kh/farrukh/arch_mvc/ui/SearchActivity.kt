@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.remote.RemoteDataSource
@@ -14,7 +14,7 @@ import kh.farrukh.arch_mvc.data.remote.RetrofitClient
 import kh.farrukh.arch_mvc.data.remote.SearchMovieResponse
 import kh.farrukh.arch_mvc.databinding.ActivitySearchBinding
 import kh.farrukh.arch_mvc.utils.handle
-import kotlinx.coroutines.Dispatchers
+import org.reactivestreams.Subscription
 
 /**
  *Created by farrukh_kh on 4/6/22 5:49 PM
@@ -24,7 +24,8 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private val binding by viewBinding(ActivitySearchBinding::bind)
     private val searchAdapter by lazy { SearchAdapter(::onMovieClick) }
-    private val dataSource by lazy { RemoteDataSource(RetrofitClient.moviesApi, Dispatchers.IO) }
+    private val dataSource by lazy { initRemoteDataSource() }
+    private var resultsSubscription: Subscription? = null
 
     private val query by lazy { intent?.getStringExtra(SEARCH_QUERY) ?: "" }
 
@@ -39,19 +40,24 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
         getSearchResults(query)
     }
 
+    override fun onStop() {
+        super.onStop()
+        resultsSubscription?.cancel()
+        resultsSubscription = null
+    }
+
     private fun setupViews() = with(binding) {
         rvSearchResults.adapter = searchAdapter
     }
 
     private fun getSearchResults(query: String) {
-        lifecycleScope.launchWhenStarted {
-            dataSource.searchResults(query).collect { result ->
-                result.handle(
-                    this@SearchActivity::displayResults,
-                    this@SearchActivity::displayError
-                )
-            }
-        }
+        dataSource.searchResults(query)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { subscription -> resultsSubscription = subscription }
+            .subscribe(
+                { result -> result.handle(::displayResults, ::displayError) },
+                ::displayError
+            )
     }
 
     private fun displayResults(response: SearchMovieResponse) = with(binding) {
@@ -78,6 +84,8 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
+
+    private fun initRemoteDataSource() = RemoteDataSource(RetrofitClient.moviesApi)
 
     companion object {
         const val SEARCH_QUERY = "searchQuery"
