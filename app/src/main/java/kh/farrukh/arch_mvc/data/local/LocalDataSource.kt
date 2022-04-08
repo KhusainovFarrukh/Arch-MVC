@@ -2,6 +2,8 @@ package kh.farrukh.arch_mvc.data.local
 
 import io.reactivex.rxjava3.core.Flowable
 import kh.farrukh.arch_mvc.data.Movie
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.concurrent.thread
 
 /**

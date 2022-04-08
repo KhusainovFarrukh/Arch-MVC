@@ -8,15 +8,16 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.local.LocalDataSource
-import kh.farrukh.arch_mvc.data.local.LocalDatabase
 import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
 import org.reactivestreams.Subscription
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {

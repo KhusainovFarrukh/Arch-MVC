@@ -26,7 +26,6 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private val binding by viewBinding(ActivitySearchBinding::bind)
     private val searchAdapter by lazy { SearchAdapter(::onMovieClick) }
-    private val dataSource by lazy { initRemoteDataSource() }
     private var resultsSubscription: Subscription? = null
 
     @Inject
@@ -89,8 +88,6 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
-
-    private fun initRemoteDataSource() = RemoteDataSource(RetrofitClient.moviesApi)
 
     companion object {
         const val SEARCH_QUERY = "searchQuery"
