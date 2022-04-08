@@ -1,7 +1,10 @@
 package kh.farrukh.arch_mvc.data.local
 
 import kh.farrukh.arch_mvc.data.Movie
+import kh.farrukh.arch_mvc.di.modules.IoDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
 /**

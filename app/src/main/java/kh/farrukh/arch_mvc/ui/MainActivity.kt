@@ -13,11 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.local.LocalDataSource
-import kh.farrukh.arch_mvc.data.local.LocalDatabase
 import kh.farrukh.arch_mvc.databinding.ActivityMainBinding
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
