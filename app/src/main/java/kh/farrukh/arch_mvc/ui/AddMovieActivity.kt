@@ -7,16 +7,15 @@ import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
 import kh.farrukh.arch_mvc.R
-import kh.farrukh.arch_mvc.databinding.ActivityAddMovieBinding
-import kh.farrukh.arch_mvc.data.local.LocalDataSource
 import kh.farrukh.arch_mvc.data.Movie
-import kh.farrukh.arch_mvc.data.local.LocalDatabase
+import kh.farrukh.arch_mvc.data.local.LocalDataSource
 import kh.farrukh.arch_mvc.data.remote.RetrofitClient.TMDB_IMAGE_URL
+import kh.farrukh.arch_mvc.databinding.ActivityAddMovieBinding
 import kh.farrukh.arch_mvc.utils.getString
 import kh.farrukh.arch_mvc.utils.load
 import kh.farrukh.arch_mvc.utils.startActivityForResult
 import kh.farrukh.arch_mvc.utils.toast
-import kotlinx.coroutines.Dispatchers
+import org.koin.android.ext.android.inject
 
 /**
  *Created by farrukh_kh on 4/3/22 10:26 PM
@@ -25,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 class AddMovieActivity : AppCompatActivity(R.layout.activity_add_movie) {
 
     private val binding by viewBinding(ActivityAddMovieBinding::bind)
-    private val dataSource by lazy { initLocalDataSource() }
+    private val dataSource by inject<LocalDataSource>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +74,4 @@ class AddMovieActivity : AppCompatActivity(R.layout.activity_add_movie) {
             else -> toast("Something went wrong")
         }
     }
-
-    private fun initLocalDataSource() = LocalDataSource(
-        LocalDatabase.getInstance(application).movieDao(), Dispatchers.IO
-    )
 }

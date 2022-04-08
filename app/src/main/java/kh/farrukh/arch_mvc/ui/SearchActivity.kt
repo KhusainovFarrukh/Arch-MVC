@@ -10,11 +10,10 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import kh.farrukh.arch_mvc.R
 import kh.farrukh.arch_mvc.data.Movie
 import kh.farrukh.arch_mvc.data.remote.RemoteDataSource
-import kh.farrukh.arch_mvc.data.remote.RetrofitClient
 import kh.farrukh.arch_mvc.data.remote.SearchMovieResponse
 import kh.farrukh.arch_mvc.databinding.ActivitySearchBinding
 import kh.farrukh.arch_mvc.utils.handle
-import kotlinx.coroutines.Dispatchers
+import org.koin.android.ext.android.inject
 
 /**
  *Created by farrukh_kh on 4/6/22 5:49 PM
@@ -24,7 +23,7 @@ class SearchActivity : AppCompatActivity(R.layout.activity_search) {
 
     private val binding by viewBinding(ActivitySearchBinding::bind)
     private val searchAdapter by lazy { SearchAdapter(::onMovieClick) }
-    private val dataSource by lazy { RemoteDataSource(RetrofitClient.moviesApi, Dispatchers.IO) }
+    private val dataSource by inject<RemoteDataSource>()
 
     private val query by lazy { intent?.getStringExtra(SEARCH_QUERY) ?: "" }
 

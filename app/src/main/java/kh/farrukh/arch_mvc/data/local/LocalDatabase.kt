@@ -1,6 +1,6 @@
 package kh.farrukh.arch_mvc.data.local
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -22,8 +22,8 @@ abstract class LocalDatabase : RoomDatabase() {
 
         private const val DB_NAME = "movie_database"
 
-        fun getInstance(application: Application): LocalDatabase =
-            Room.databaseBuilder(application, LocalDatabase::class.java, DB_NAME)
+        fun getInstance(context: Context): LocalDatabase =
+            Room.databaseBuilder(context, LocalDatabase::class.java, DB_NAME)
                 .allowMainThreadQueries()
                 .build()
     }
